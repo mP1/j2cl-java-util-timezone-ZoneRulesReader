@@ -7,17 +7,17 @@
     <!-- ==================================================================== -->
     <modelVersion>4.0.0</modelVersion>
     <groupId>walkingkooka</groupId>
-    <artifactId>j2cl-java-util-timeone-ZoneRulesReader</artifactId>
+    <artifactId>j2cl-java-util-timezone-ZoneRulesReader</artifactId>
     <packaging>jar</packaging>
     <name>java.util.StringTokenizer</name>
     <version>1.0-SNAPSHOT</version>
     <description>Additional missing java.io classes</description>
-    <url>https://github.com/mP1/j2cl-java-util-timeone-ZoneRulesReader</url>
+    <url>https://github.com/mP1/j2cl-java-util-timezone-ZoneRulesReader</url>
 
     <!-- ==================================================================== -->
     <issueManagement>
         <system>GitHub</system>
-        <url>https://github.com/mP1/j2cl-java-util-timeone-ZoneRulesReader/issues</url>
+        <url>https://github.com/mP1/j2cl-java-util-timezone-ZoneRulesReader/issues</url>
     </issueManagement>
     <inceptionYear>2020</inceptionYear>
 
@@ -43,9 +43,9 @@
         </license>
     </licenses>
     <scm>
-        <connection>scm:git:https://github.com/mP1/j2cl-java-util-timeone-ZoneRulesReader.git</connection>
-        <developerConnection>scm:git:https://github.com/mP1/j2cl-java-util-timeone-ZoneRulesReader.git</developerConnection>
-        <url>https://github.com/mP1/j2cl-java-util-timeone-ZoneRulesReader</url>
+        <connection>scm:git:https://github.com/mP1/j2cl-java-util-timezone-ZoneRulesReader.git</connection>
+        <developerConnection>scm:git:https://github.com/mP1/j2cl-java-util-timezone-ZoneRulesReader.git</developerConnection>
+        <url>https://github.com/mP1/j2cl-java-util-timezone-ZoneRulesReader</url>
         <tag>HEAD</tag>
     </scm>
 
