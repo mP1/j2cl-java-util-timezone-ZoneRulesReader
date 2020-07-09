@@ -136,6 +136,16 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.4</version>
+                <configuration>
+                    <excludes>
+                        <!-- these were copied from org/threeten/bp no new functionality was added only methods removed -->
+                        <exclude>walkingkooka/j2cl/java/util/timezone/zonerulesreader/org/threeten/bp/*</exclude>
+                        <exclude>walkingkooka/j2cl/java/util/timezone/zonerulesreader/org/threeten/bp/chrono/*</exclude>
+                        <exclude>walkingkooka/j2cl/java/util/timezone/zonerulesreader/org/threeten/bp/jdk/*</exclude>
+                        <exclude>walkingkooka/j2cl/java/util/timezone/zonerulesreader/org/threeten/bp/temporal/*</exclude>
+                        <exclude>walkingkooka/j2cl/java/util/timezone/zonerulesreader/org/threeten/bp/zone/*</exclude>
+                    </excludes>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
