@@ -19,11 +19,10 @@ package walkingkooka.j2cl.java.util.timezone.zonerulesreader.org.threeten.bp.jav
 
 
 import org.junit.jupiter.api.Test;
+import walkingkooka.test.Testing;
 import walkingkooka.text.CharSequences;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-public final class PatternTest {
+public final class PatternTest implements Testing {
 
     @Test
     public void testFirstNonAlpha() {
@@ -135,10 +134,12 @@ public final class PatternTest {
         this.isZoneIdAndCheck("AAAA ", false);
     }
 
-    private static void isZoneIdAndCheck(final String zoneId,
-                                         final boolean expected) {
-        assertEquals(Pattern.isZoneId(zoneId),
+    private void isZoneIdAndCheck(final String zoneId,
+                                  final boolean expected) {
+        this.checkEquals(
+                Pattern.isZoneId(zoneId),
                 expected,
-                "zoneId " + CharSequences.quoteAndEscape(zoneId));
+                "zoneId " + CharSequences.quoteAndEscape(zoneId)
+        );
     }
 }
