@@ -19,6 +19,7 @@ package walkingkooka.j2cl.java.util.timezone.zonerulesreader.org.threeten.bp.zon
 
 import org.junit.jupiter.api.Test;
 import walkingkooka.j2cl.java.util.timezone.zonerulesreader.org.threeten.bp.Instant;
+import walkingkooka.test.Testing;
 import walkingkooka.text.CharSequences;
 
 import java.time.Duration;
@@ -33,11 +34,10 @@ import java.util.GregorianCalendar;
 import java.util.TimeZone;
 import java.util.function.Supplier;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public final class ZoneRulesTest {
+public final class ZoneRulesTest implements Testing {
 
     private final static String SYDNEY = "Australia/Sydney";
     private final static String PERTH = "Australia/Perth";
@@ -153,7 +153,7 @@ public final class ZoneRulesTest {
 
         final ZoneRules emulatedRules = ZoneRules.of(zoneId);
 
-        assertEquals(ZoneRules.transformZoneOffset(jreZoneOffset),
+        this.checkEquals(ZoneRules.transformZoneOffset(jreZoneOffset),
                 emulatedRules.getOffset(ZoneRules.transformLocalDateTime(dateTime)),
                 () -> zoneId + " getOffset " + dateTime);
     }
@@ -267,14 +267,14 @@ public final class ZoneRulesTest {
         final Instant emulatedInstant = ZoneRules.transformInstant(jreInstant);
 
         final boolean inDaylightSavings = jreRules.isDaylightSavings(jreInstant);
-        assertEquals(inDaylightSavings,
+        this.checkEquals(inDaylightSavings,
                 emulatedRules.isDaylightSavings(emulatedInstant),
                 () -> zoneId + " isDaylightSavings " + dateTime + "( jreInstant: " + jreInstant + ", emulatedInstant: " + emulatedInstant + ")");
 
         final Date date = java.util.Date
                 .from(dateTime.atZone(zoneId)
                         .toInstant());
-        assertEquals(inDaylightSavings,
+        this.checkEquals(inDaylightSavings,
                 TimeZone.getTimeZone(zoneId).inDaylightTime(date),
                 () -> zoneId + " isDaylightSavings " + dateTime + " vs TimeZone.getTimeZone.inDaylightTime " + date);
     }
@@ -385,7 +385,7 @@ public final class ZoneRulesTest {
         final Date date = java.util.Date
                 .from(dateTime.atZone(zoneId)
                         .toInstant());
-        assertEquals(TimeZone.getTimeZone(zoneId).inDaylightTime(date),
+        this.checkEquals(TimeZone.getTimeZone(zoneId).inDaylightTime(date),
                 emulatedRules.inDaylightTime(date),
                 () -> zoneId + " inDaylightTime " + dateTime + " vs TimeZone.getTimeZone.inDaylightTime " + date);
     }
@@ -499,10 +499,10 @@ public final class ZoneRulesTest {
         //final Date date = new Date(dateTime.toEpochSecond(jreZoneOffset));
         final Date date = Date.from(dateTime.toInstant(jreZoneOffset));
 
-//        assertEquals(jreZoneOffset.getTotalSeconds() * 1000,
+//        this.checkEquals(jreZoneOffset.getTotalSeconds() * 1000,
 //                TimeZone.getTimeZone(zoneId).getOffset(date.getTime()),
 //                () -> zoneId + " getOffsetLong " + dateTime + " vs TimeZone.getTimeZone.getOffset " + date);
-        assertEquals(TimeZone.getTimeZone(zoneId).getOffset(date.getTime()),
+        this.checkEquals(TimeZone.getTimeZone(zoneId).getOffset(date.getTime()),
                 emulatedRules.getOffset(date.getTime()),
                 () -> "TimeZone.getTimeZone.getOffset " + date + " " + zoneId + " getOffsetLong " + dateTime);
     }
@@ -687,7 +687,7 @@ public final class ZoneRulesTest {
                     ", getOffset5Int: " + year + "/" + month + "/" + day + " " + hours + ":" + minutes +
                     ", jreRawOffset: " + duration(jreRawOffset).toString().substring(2);
 
-            assertEquals(duration(jreOffset),
+            this.checkEquals(duration(jreOffset),
                     duration(emulatedOffset),
                     message);
         }
@@ -729,7 +729,7 @@ public final class ZoneRulesTest {
     }
 
     private void observesDaylightTimeAndCheck(final String zoneId) throws Exception {
-        assertEquals(TimeZone.getTimeZone(zoneId).observesDaylightTime(),
+        this.checkEquals(TimeZone.getTimeZone(zoneId).observesDaylightTime(),
                 ZoneRules.of(ZoneId.of(zoneId)).observesDaylightTime(),
                 () -> "observesDaylightTime for zoneId " + CharSequences.quoteAndEscape(zoneId));
     }
@@ -766,7 +766,7 @@ public final class ZoneRulesTest {
     }
 
     private void useDaylightTimeAndCheck(final String zoneId) throws Exception {
-        assertEquals(TimeZone.getTimeZone(zoneId).useDaylightTime(),
+        this.checkEquals(TimeZone.getTimeZone(zoneId).useDaylightTime(),
                 ZoneRules.of(ZoneId.of(zoneId)).useDaylightTime(),
                 () -> "useDaylightTime for zoneId " + CharSequences.quoteAndEscape(zoneId));
     }
