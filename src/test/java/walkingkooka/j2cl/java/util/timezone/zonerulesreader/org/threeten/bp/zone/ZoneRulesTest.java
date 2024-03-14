@@ -720,7 +720,7 @@ public final class ZoneRulesTest implements Testing {
     }
 
     @Test
-    public void testObservesDaylightTimeAllTimezons() throws Exception {
+    public void testObservesDaylightTimeAllTimezones() throws Exception {
         for (final String zoneId : TimeZone.getAvailableIDs()) {
             switch (zoneId) {
                 case "Africa/Casablanca":
