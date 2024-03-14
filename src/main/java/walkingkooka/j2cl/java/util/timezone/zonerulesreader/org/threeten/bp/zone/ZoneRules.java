@@ -33,9 +33,6 @@ package walkingkooka.j2cl.java.util.timezone.zonerulesreader.org.threeten.bp.zon
 
 import javaemul.internal.annotations.GwtIncompatible;
 import walkingkooka.j2cl.java.io.string.StringDataInputDataOutput;
-import walkingkooka.j2cl.locale.Calendar;
-import walkingkooka.j2cl.locale.GregorianCalendar;
-import walkingkooka.j2cl.locale.TimeZoneOffsetAndDaylightSavings;
 import walkingkooka.j2cl.java.util.timezone.zonerulesreader.org.threeten.bp.Duration;
 import walkingkooka.j2cl.java.util.timezone.zonerulesreader.org.threeten.bp.Instant;
 import walkingkooka.j2cl.java.util.timezone.zonerulesreader.org.threeten.bp.LocalDate;
@@ -43,15 +40,21 @@ import walkingkooka.j2cl.java.util.timezone.zonerulesreader.org.threeten.bp.Loca
 import walkingkooka.j2cl.java.util.timezone.zonerulesreader.org.threeten.bp.LocalTime;
 import walkingkooka.j2cl.java.util.timezone.zonerulesreader.org.threeten.bp.ZoneOffset;
 import walkingkooka.j2cl.java.util.timezone.zonerulesreader.org.threeten.bp.jdk8.Jdk8Methods;
+import walkingkooka.j2cl.java.util.timezone.zonerulesreader.org.threeten.bp.zone.org.threeten.bp.zone.TzdbZoneRulesProvider;
+import walkingkooka.j2cl.locale.Calendar;
+import walkingkooka.j2cl.locale.GregorianCalendar;
+import walkingkooka.j2cl.locale.TimeZoneOffsetAndDaylightSavings;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutput;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Serializable;
-import java.lang.reflect.Method;
 import java.time.ZoneId;
 import java.util.Collections;
 import java.util.Date;
@@ -82,6 +85,20 @@ import java.util.List;
  */
 public abstract class ZoneRules implements TimeZoneOffsetAndDaylightSavings {
 
+    static {
+        try {
+            String libDir = System.getProperty("java.home") + File.separator + "lib";
+            try (DataInputStream dis = new DataInputStream(
+                    new BufferedInputStream(new FileInputStream(
+                            new File(libDir, "tzdb.dat"))))) {
+                walkingkooka.j2cl.java.util.timezone.zonerulesreader.org.threeten.bp.zone.org.threeten.bp.zone.ZoneRulesProvider.registerProvider(new TzdbZoneRulesProvider(dis));
+
+            }
+        } catch (final IOException cause) {
+            throw new Error("Unable to load tzdb.dat", cause);
+        }
+    }
+
     @GwtIncompatible
     public static void main(final String[] args) throws Exception {
         final StandardZoneRules rules = (StandardZoneRules)of(java.time.ZoneId.of("Australia/Sydney"));
@@ -99,16 +116,24 @@ public abstract class ZoneRules implements TimeZoneOffsetAndDaylightSavings {
     @GwtIncompatible
     public static ZoneRules of(final java.time.ZoneId zoneId) throws Exception {
         final java.time.zone.ZoneRules rules = zoneId.getRules();
+        byte[] zoneBytes;
+
+        // There are two copies of bp310 in this repo
+        // - walkingkooka.j2cl.java.util.timezone.zonerulesreader.org.threeten.bp has a few classes taken from from j2cl-java-time.
+        //   these are a bare minimum and used in tests to verify that the StandardZoneRules created here can be compared
+        //   against the JRE java.time classes.
+        // - walkingkooka.j2cl.java.util.timezone.zonerulesreader.org.threeten.bp.zone.org.threeten.bp This is a shaded
+        //   verbatime copy with one small change. ZoneRules.writeExternal has been made public so it can be called.
+        final walkingkooka.j2cl.java.util.timezone.zonerulesreader.org.threeten.bp.zone.org.threeten.bp.zone.ZoneRules rules2 = walkingkooka.j2cl.java.util.timezone.zonerulesreader.org.threeten.bp.zone.org.threeten.bp.ZoneId.of(
+                zoneId.getId()
+        ).getRules();
 
         try (final ByteArrayOutputStream bytesOut = new ByteArrayOutputStream()) {
             try (final DataOutputStream dataOut = new DataOutputStream(bytesOut)) {
-                final Method writeExternal = rules.getClass().getDeclaredMethod("writeExternal", DataOutput.class); // assumes a single ZoneRule class
-                writeExternal.setAccessible(true);
-                writeExternal.invoke(rules, dataOut);
+                rules2.writeExternal(dataOut);
 
                 dataOut.flush();
             }
-
             bytesOut.flush();
 
             try (final ByteArrayInputStream bytesIn = new ByteArrayInputStream(bytesOut.toByteArray())) {
