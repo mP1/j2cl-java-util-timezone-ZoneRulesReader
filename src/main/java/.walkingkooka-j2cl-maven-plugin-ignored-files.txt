@@ -1,0 +1,4 @@
+#
+# for gwt to ignore the 2nd "copy" of org.three.bp under walkingkooka.j2cl.java.util.timezone.zonerulesreader.org.threeten.bp.zone
+#
+**/bp/zone/org/**

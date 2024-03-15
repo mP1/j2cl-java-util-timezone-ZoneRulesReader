@@ -36,6 +36,11 @@ import walkingkooka.j2cl.java.util.timezone.zonerulesreader.org.threeten.bp.zone
 import walkingkooka.j2cl.java.util.timezone.zonerulesreader.org.threeten.bp.zone.org.threeten.bp.ZonedDateTime;
 import walkingkooka.j2cl.java.util.timezone.zonerulesreader.org.threeten.bp.zone.org.threeten.bp.jdk8.Jdk8Methods;
 
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.NavigableMap;
 import java.util.Set;
@@ -308,4 +313,20 @@ public abstract class ZoneRulesProvider {
         return false;
     }
 
+    // j2cl-java-util-timezone-ZoneRulesReader: Added here to lazy init from jre/lib/tzdb.dat
+    // must be last in this class so all other static fields are already set before this is called.
+
+    static {
+        try {
+            String libDir = System.getProperty("java.home") + File.separator + "lib";
+            try (DataInputStream dis = new DataInputStream(
+                    new BufferedInputStream(new FileInputStream(
+                            new File(libDir, "tzdb.dat"))))) {
+                ZoneRulesProvider.registerProvider(new TzdbZoneRulesProvider(dis));
+
+            }
+        } catch (final IOException cause) {
+            throw new Error("Unable to load java.home/lib/tzdb.dat", cause);
+        }
+    }
 }
