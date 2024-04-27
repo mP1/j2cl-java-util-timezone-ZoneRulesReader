@@ -31,6 +31,7 @@
  */
 package walkingkooka.j2cl.java.util.timezone.zonerulesreader.org.threeten.bp.zone.org.threeten.bp.zone;
 
+import javaemul.internal.annotations.GwtIncompatible;
 import walkingkooka.j2cl.java.util.timezone.zonerulesreader.org.threeten.bp.zone.org.threeten.bp.Duration;
 import walkingkooka.j2cl.java.util.timezone.zonerulesreader.org.threeten.bp.zone.org.threeten.bp.Instant;
 import walkingkooka.j2cl.java.util.timezone.zonerulesreader.org.threeten.bp.zone.org.threeten.bp.LocalDateTime;
@@ -489,10 +490,43 @@ public abstract class ZoneRules {
             return Collections.emptyList();
         }
 
-        @Override
-        public void writeExternal(final DataOutput out) throws IOException {
-            throw new UnsupportedOperationException(); // added by j2cl-java-util-timezone-ZoneRulesReader
+        // MP 20240427 j2cl-java-util-timezone-ZoneRulesReader
+        // ZoneIds = GMT will return a Fixed instance, which means any Fixed.writeExternal must be implemented.
+        // most fields are empty arrays thus the writes below represent a basic complete serialized record.
+        // The source from StandardZoneRules was studied and used as a template, with most statements when not used being
+        // commented out below.
+        @GwtIncompatible
+        public void writeExternal(DataOutput out) throws IOException {
+            // no standard transitions
+            out.writeInt(0);
+            //out.writeInt(standardTransitions.length);
+//            for (long trans : standardTransitions) {
+//                Ser.writeEpochSec(trans, out);
+//            }
+//            for (ZoneOffset offset : standardOffsets) {
+
+            // 1x standard offset
+                Ser.writeOffset(offset, out);
+//            }
+
+            // 0x savingsInstantTransitions
+            out.writeInt(0);
+//            out.writeInt(savingsInstantTransitions.length);
+//            for (long trans : savingsInstantTransitions) {
+//                Ser.writeEpochSec(trans, out);
+//            }
+//            for (ZoneOffset offset : wallOffsets) {
+            // 1x wall offset the actual offset.
+                Ser.writeOffset(offset, out);
+//            }
+            // 0x lastRules
+            out.writeByte(0);
+//            out.writeByte(lastRules.length);
+//            for (ZoneOffsetTransitionRule rule : lastRules) {
+//                rule.writeExternal(out);
+//            }
         }
+
         //-----------------------------------------------------------------------
         @Override
         public boolean equals(Object obj) {
